@@ -33,7 +33,7 @@ setup(name='klamath',
             'Intended Audience :: Information Technology',
             'Intended Audience :: Manufacturing',
             'Intended Audience :: Science/Research',
-            'License :: OSI Approved :: GNU General Public License v3',
+            'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
             'Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)',
       ],
       keywords=[
