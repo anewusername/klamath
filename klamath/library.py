@@ -26,7 +26,7 @@ class FileHeader:
     File header records: HEADER BGNLIB LIBNAME UNITS
        Optional record are ignored if present and never written.
 
-    Version is assumed to be `600`.
+    Version is written as `600`.
     """
     name: bytes
     """ Library name """
@@ -55,8 +55,6 @@ class FileHeader:
             FileHeader object
         """
         version = HEADER.read(stream)[0]
-        if version != 600:
-            raise KlamathError(f'Got GDS version {version}, expected 600')
         mod_time, acc_time = BGNLIB.read(stream)
         name = LIBNAME.skip_and_read(stream)
         uu, dbu = UNITS.skip_and_read(stream)
