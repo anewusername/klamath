@@ -49,7 +49,7 @@ def read_record_header(stream: BinaryIO) -> Tuple[int, int]:
 def expect_record(stream: BinaryIO, tag: int) -> int:
     data_size, actual_tag = read_record_header(stream)
     if tag != actual_tag:
-        raise KlamathError(f'Unexpected record! Got tag {actual_tag:04x}, expected {tag:04x}')
+        raise KlamathError(f'Unexpected record! Got tag 0x{actual_tag:04x}, expected 0x{tag:04x}')
     return data_size
 
 
