@@ -484,6 +484,7 @@ class Text(Element):
             if self.angle_deg !=0:
                 b += ANGLE.write(stream, self.angle_deg)
         b += XY.write(stream, self.xy)
+        b += STRING.write(stream, self.string)
         b += write_properties(stream, self.properties)
         b += ENDEL.write(stream, None)
         return b
