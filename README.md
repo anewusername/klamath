@@ -111,7 +111,7 @@ Write an example GDS file:
 import klamath
 from klamath.elements import Boundary, Text, Path, Reference
 
-stream = file.open('example.gds', 'wb')
+stream = open('example.gds', 'wb')
 
 header = klamath.library.FileHeader(
                 name=b'example',
@@ -140,7 +140,7 @@ elements_A = [
          extension=(0, 0),     # ignored since path_type=0
          properties={}),
     ]
-klamath.library.write(stream, name=b'my_struct', elements=elements_A)
+klamath.library.write_struct(stream, name=b'my_struct', elements=elements_A)
 
 elements_top = [
     Reference(struct_name=b'my_struct',
@@ -151,16 +151,16 @@ elements_top = [
               mag=1.5,
               properties={}),
     Reference(struct_name=b'my_struct',
-              colrow=(3, 2),                   # 3x2 array at (0, 50)
-              xy=[[0, 50], [60, 50], [30, 50]] #   with basis vectors
-              angle_deg=30,                    #   [20, 0] and [0, 30]
+              colrow=(3, 2),                    # 3x2 array at (0, 50)
+              xy=[[0, 50], [60, 50], [30, 50]], #   with basis vectors
+              angle_deg=30,                     #   [20, 0] and [0, 30]
               invert_y=False,
               mag=1,
               properties={}),
     ]
-klamath.library.write(stream, name=b'top', elements=elements_top)
+klamath.library.write_struct(stream, name=b'top', elements=elements_top)
 
-klamath.records.ENDLIB.write(stream)
+klamath.records.ENDLIB.write(stream, None)
 stream.close()
 ```
 
@@ -169,7 +169,7 @@ Read back the file:
 ```python3
 import klamath
 
-stream = file.open('example.gds', 'rb')
+stream = open('example.gds', 'rb')
 header = klamath.library.FileHeader.read(stream)
 
 structs = {}
@@ -181,6 +181,8 @@ while struct is not None:
     struct = klamath.library.try_read_struct(stream)
 
 stream.close()
+
+print(structs)
 ```
 
 Read back a single struct by name:
@@ -188,7 +190,7 @@ Read back a single struct by name:
 ```python3
 import klamath
 
-stream = file.open('example.gds', 'rb')
+stream = open('example.gds', 'rb')
 
 header = klamath.library.FileHeader.read(stream)
 struct_positions = klamath.library.scan_structs(stream)
@@ -197,4 +199,6 @@ stream.seek(struct_positions[b'my_struct'])
 elements_A = klamath.library.try_read_struct(stream)
 
 stream.close()
+
+print(elements_A)
 ```
