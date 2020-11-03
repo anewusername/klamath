@@ -27,16 +27,12 @@ The goal is to keep this library simple:
  tools for working with hierarchical design data and supports multiple
  file formats.
 """
-import pathlib
-
 from . import basic
 from . import record
 from . import records
 from . import elements
 from . import library
 
+from .VERSION import __version__
 
 __author__ = 'Jan Petykiewicz'
-
-with open(pathlib.Path(__file__).parent / 'VERSION', 'r') as f:
-    __version__ = f.read().strip()

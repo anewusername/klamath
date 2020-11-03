@@ -6,8 +6,8 @@ from setuptools import setup, find_packages
 with open('README.md', 'r') as f:
     long_description = f.read()
 
-with open('klamath/VERSION', 'r') as f:
-    version = f.read().strip()
+with open('klamath/VERSION.py', 'rt') as f:
+    version = f.readlines()[2].strip()
 
 setup(name='klamath',
       version=version,
@@ -19,9 +19,7 @@ setup(name='klamath',
       url='https://mpxd.net/code/jan/klamath',
       packages=find_packages(),
       package_data={
-          'klamath': ['VERSION',
-                     'py.typed',
-                     ]
+          'klamath': ['py.typed'],
       },
       install_requires=[
             'numpy',
