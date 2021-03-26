@@ -98,7 +98,7 @@ def pack_int4(data: Sequence[int]) -> bytes:
 
 def encode_real8(fnums: numpy.ndarray) -> numpy.ndarray:
     """ Convert from float64 to GDS REAL8 representation. """
-    # Split the bitfields
+    # Split the ieee float bitfields
     ieee = numpy.atleast_1d(fnums.astype(numpy.float64).view(numpy.uint64))
     sign = ieee & numpy.uint64(0x8000_0000_0000_0000)
     ieee_exp = (ieee >> numpy.uint64(52)).astype(numpy.int32) & numpy.int32(0x7ff)
@@ -107,11 +107,17 @@ def encode_real8(fnums: numpy.ndarray) -> numpy.ndarray:
     subnorm = (ieee_exp == 0) & (ieee_mant != 0)
     zero = (ieee_exp == 0) & (ieee_mant == 0)
 
+    # IEEE normal double is (1 + ieee_mant / 2^52) * 2^(ieee_exp - 1023)
+    # IEEE subnormal double is (ieee_mant / 2^52) * 2^(-1022)
+    # GDS real8 is (gds_mant / 2^(7*8)) * 16^(gds_exp - 64)
+    #            = (gds_mant / 2^56) * 2^(4 * gds_exp - 256)
+
     # Convert exponent.
-    #  * 16-based
-    #  * +1 due to mantissa differences (1.xxxx in IEEE vs 0.1xxxxx in GDSII)
-    exp16, rest = numpy.divmod(ieee_exp + 1 - 1023, 4)
-    # Compensate exponent conversion
+    exp2 = ieee_exp + 1 - 1023   # +1 is due to mantissa (1.xxxx in IEEE vs 0.xxxxx in GDSII)
+    exp2[subnorm] = -1022
+    exp16, rest = numpy.divmod(exp2, 4)
+
+    # Compensate for exponent coarseness
     comp = (rest != 0)
     exp16[comp] += 1
 
@@ -120,30 +126,30 @@ def encode_real8(fnums: numpy.ndarray) -> numpy.ndarray:
     shift -= 3      # account for gds bit position
 
     # add leading one
-    gds_mant_unshifted = ieee_mant + 0x10_0000_0000_0000
+    gds_mant_unshifted = ieee_mant.copy()
+    gds_mant_unshifted[~subnorm] += 0x10_0000_0000_0000
 
     rshift = (shift > 0)
     gds_mant = numpy.empty_like(ieee_mant)
-    gds_mant[~rshift] = gds_mant_unshifted[~rshift] << (-shift[~rshift]).astype(numpy.uint8)
-    gds_mant[ rshift] = gds_mant_unshifted[ rshift] >> ( shift[ rshift]).astype(numpy.uint8)
+    gds_mant[~rshift] = gds_mant_unshifted[~rshift] << (-shift[~rshift]).astype(numpy.uint16)
+    gds_mant[ rshift] = gds_mant_unshifted[ rshift] >> ( shift[ rshift]).astype(numpy.uint16)
 
     # add gds exponent bias
-    exp16_biased = exp16 + 64
+    gds_exp = exp16 + 64
 
-    neg_biased = (exp16_biased < 0)
-    gds_mant[neg_biased] >>= (exp16_biased[neg_biased] * 4).astype(numpy.uint8)
-    exp16_biased[neg_biased] = 0
+    neg_biased = (gds_exp < 0)
+    gds_mant[neg_biased] >>= (gds_exp[neg_biased] * 4).astype(numpy.uint16)
+    gds_exp[neg_biased] = 0
 
-    too_big = (exp16_biased > 0x7f) & ~(zero | subnorm)
+    too_big = (gds_exp > 0x7f) & ~(zero | subnorm)
     if too_big.any():
         raise KlamathError(f'Number(s) too big for real8 format: {fnums[too_big]}')
 
-    gds_exp = exp16_biased.astype(numpy.uint64) << 56
+    gds_exp_bits = gds_exp.astype(numpy.uint64) << 56
 
-    real8 = sign | gds_exp | gds_mant
+    real8 = sign | gds_exp_bits | gds_mant
     real8[zero] = 0
-    real8[subnorm] = 0            # TODO handle subnormals
-    real8[exp16_biased < -14] = 0 # number is too small
+    real8[gds_exp < -14] = 0 # number is too small
 
     return real8
 
