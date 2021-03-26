@@ -56,7 +56,7 @@ def parse_real8(data: bytes) -> numpy.ndarray:
 
 def parse_ascii(data: bytes) -> bytes:
     if len(data) == 0:
-        raise KlamathError(f'Received empty ascii data.')
+        return b''
     if data[-1:] == b'\0':
         return data[:-1]
     return data
