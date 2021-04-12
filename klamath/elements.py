@@ -338,8 +338,8 @@ class Box(Element):
 
     @classmethod
     def read(cls: Type[X], stream: BinaryIO) -> X:
-        layer = LAYER.skip_and_read(stream)
-        dtype = BOXTYPE.read(stream)
+        layer = LAYER.skip_and_read(stream)[0]
+        dtype = BOXTYPE.read(stream)[0]
         xy = XY.read(stream).reshape(-1, 2)
         properties = read_properties(stream)
         return cls(layer=(layer, dtype), xy=xy, properties=properties)
@@ -372,8 +372,8 @@ class Node(Element):
 
     @classmethod
     def read(cls: Type[N], stream: BinaryIO) -> N:
-        layer = LAYER.skip_and_read(stream)
-        dtype = NODETYPE.read(stream)
+        layer = LAYER.skip_and_read(stream)[0]
+        dtype = NODETYPE.read(stream)[0]
         xy = XY.read(stream).reshape(-1, 2)
         properties = read_properties(stream)
         return cls(layer=(layer, dtype), xy=xy, properties=properties)
@@ -438,8 +438,8 @@ class Text(Element):
         width = 0
         mag = 1
         angle_deg = 0
-        layer = LAYER.skip_and_read(stream)
-        dtype = TEXTTYPE.read(stream)
+        layer = LAYER.skip_and_read(stream)[0]
+        dtype = TEXTTYPE.read(stream)[0]
 
         size, tag = Record.read_header(stream)
         while tag != XY.tag:
