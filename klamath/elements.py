@@ -391,7 +391,7 @@ class Node(Element):
 @dataclass
 class Text(Element):
     """
-    Datastructure representing a Node element. Rarely used.
+    Datastructure representing a text label.
     """
     __slots__ = ('layer', 'xy', 'properties', 'presentation', 'path_type',
                  'width', 'invert_y', 'mag', 'angle_deg', 'string')
