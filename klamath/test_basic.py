@@ -73,9 +73,9 @@ def test_parse_real8():
 
 
 def test_parse_ascii():
-    # empty data
-    with pytest.raises(KlamathError):
-        parse_ascii(b'')
+#    # empty data       Now allowed!
+#    with pytest.raises(KlamathError):
+#        parse_ascii(b'')
 
     assert(parse_ascii(b'12345') == b'12345')
     assert(parse_ascii(b'12345\0') == b'12345') # strips trailing null byte
