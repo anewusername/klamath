@@ -2,7 +2,7 @@
 Functionality for reading/writing elements (geometry, text labels,
  structure references) and associated properties.
 """
-from typing import Dict, Tuple, Optional, BinaryIO, TypeVar, Type
+from typing import Dict, Tuple, Optional, BinaryIO, TypeVar, Type, Union
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
 
@@ -144,7 +144,7 @@ class Reference(Element):
           basis vectors to match it.
     """
 
-    colrow: Optional[Tuple[int, int]]
+    colrow: Optional[Union[Tuple[int, int], numpy.ndarray]]
     """ Number of columns and rows (AREF) or None (SREF) """
 
     properties: Dict[int, bytes]
