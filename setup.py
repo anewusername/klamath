@@ -26,7 +26,7 @@ setup(name='klamath',
       ],
       classifiers=[
             'Programming Language :: Python :: 3',
-            'Development Status :: 4 - Beta',
+            'Development Status :: 5 - Production/Stable',
             'Intended Audience :: Developers',
             'Intended Audience :: Information Technology',
             'Intended Audience :: Manufacturing',
