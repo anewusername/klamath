@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "klamath"
+description = "GDSII format reader/writer"
+readme = "README.md"
+license = { file = "LICENSE.md" }
+authors = [
+    { name="Jan Petykiewicz", email="jan@mpxd.net" },
+    ]
+homepage = "https://mpxd.net/code/jan/klamath"
+repository = "https://mpxd.net/code/jan/klamath"
+keywords = [
+    "layout",
+    "gds",
+    "gdsii",
+    "gds2",
+    "Calma",
+    "stream",
+    "design",
+    "CAD",
+    "EDA",
+    "electronics",
+    "photonics",
+    "IC",
+    "mask",
+    "pattern",
+    "drawing",
+    "lithography",
+    "litho",
+    "geometry",
+    "geometric",
+    "polygon",
+    "vector",
+    ]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Manufacturing",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)",
+    ]
+requires-python = ">=3.8"
+include = [
+    "LICENSE.md"
+    ]
+dynamic = ["version"]
+dependencies = [
+    "numpy~=1.21",
+    ]
+
+[tool.hatch.version]
+path = "klamath/__init__.py"

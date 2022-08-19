@@ -33,6 +33,6 @@ from . import records
 from . import elements
 from . import library
 
-from .VERSION import __version__
-
 __author__ = 'Jan Petykiewicz'
+__version__ = '1.2'
+
