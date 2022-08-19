@@ -34,5 +34,5 @@ from . import elements
 from . import library
 
 __author__ = 'Jan Petykiewicz'
-__version__ = '1.2'
+__version__ = '1.3'
 
