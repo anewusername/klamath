@@ -2,7 +2,7 @@
 Functionality for reading/writing elements (geometry, text labels,
  structure references) and associated properties.
 """
-from typing import Dict, Tuple, Optional, BinaryIO, TypeVar, Type, Union
+from typing import Dict, Tuple, Optional, IO, TypeVar, Type, Union
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
 
@@ -29,7 +29,7 @@ X = TypeVar('X', bound='Box')
 
 
 
-def read_properties(stream: BinaryIO) -> Dict[int, bytes]:
+def read_properties(stream: IO[bytes]) -> Dict[int, bytes]:
     """
     Read element properties.
 
@@ -56,7 +56,7 @@ def read_properties(stream: BinaryIO) -> Dict[int, bytes]:
     return properties
 
 
-def write_properties(stream: BinaryIO, properties: Dict[int, bytes]) -> int:
+def write_properties(stream: IO[bytes], properties: Dict[int, bytes]) -> int:
     """
     Write element properties.
 
@@ -78,7 +78,7 @@ class Element(metaclass=ABCMeta):
     """
     @classmethod
     @abstractmethod
-    def read(cls: Type[E], stream: BinaryIO) -> E:
+    def read(cls: Type[E], stream: IO[bytes]) -> E:
         """
         Read from a stream to construct this object.
         Consumes up to (and including) the ENDEL record.
@@ -92,7 +92,7 @@ class Element(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def write(self, stream: BinaryIO) -> int:
+    def write(self, stream: IO[bytes]) -> int:
         """
         Write this element to a stream.
         Finishes with an ENDEL record.
@@ -151,7 +151,7 @@ class Reference(Element):
     """ Properties associated with this reference. """
 
     @classmethod
-    def read(cls: Type[R], stream: BinaryIO) -> R:
+    def read(cls: Type[R], stream: IO[bytes]) -> R:
         invert_y = False
         mag = 1
         angle_deg = 0
@@ -177,7 +177,7 @@ class Reference(Element):
         return cls(struct_name=struct_name, xy=xy, properties=properties, colrow=colrow,
                    invert_y=invert_y, mag=mag, angle_deg=angle_deg)
 
-    def write(self, stream: BinaryIO) -> int:
+    def write(self, stream: IO[bytes]) -> int:
         b = 0
         if self.colrow is None:
             b += SREF.write(stream, None)
@@ -226,14 +226,14 @@ class Boundary(Element):
     """ Properties for the element. """
 
     @classmethod
-    def read(cls: Type[B], stream: BinaryIO) -> B:
+    def read(cls: Type[B], stream: IO[bytes]) -> B:
         layer = LAYER.skip_and_read(stream)[0]
         dtype = DATATYPE.read(stream)[0]
         xy = XY.read(stream).reshape(-1, 2)
         properties = read_properties(stream)
         return cls(layer=(layer, dtype), xy=xy, properties=properties)
 
-    def write(self, stream: BinaryIO) -> int:
+    def write(self, stream: IO[bytes]) -> int:
         b = BOUNDARY.write(stream, None)
         b += LAYER.write(stream, self.layer[0])
         b += DATATYPE.write(stream, self.layer[1])
@@ -272,7 +272,7 @@ class Path(Element):
     """ Properties for the element. """
 
     @classmethod
-    def read(cls: Type[P], stream: BinaryIO) -> P:
+    def read(cls: Type[P], stream: IO[bytes]) -> P:
         path_type = 0
         width = 0
         bgn_ext = 0
@@ -299,7 +299,7 @@ class Path(Element):
                    properties=properties, extension=(bgn_ext, end_ext),
                    path_type=path_type, width=width)
 
-    def write(self, stream: BinaryIO) -> int:
+    def write(self, stream: IO[bytes]) -> int:
         b = PATH.write(stream, None)
         b += LAYER.write(stream, self.layer[0])
         b += DATATYPE.write(stream, self.layer[1])
@@ -337,14 +337,14 @@ class Box(Element):
     """ Properties for the element. """
 
     @classmethod
-    def read(cls: Type[X], stream: BinaryIO) -> X:
+    def read(cls: Type[X], stream: IO[bytes]) -> X:
         layer = LAYER.skip_and_read(stream)[0]
         dtype = BOXTYPE.read(stream)[0]
         xy = XY.read(stream).reshape(-1, 2)
         properties = read_properties(stream)
         return cls(layer=(layer, dtype), xy=xy, properties=properties)
 
-    def write(self, stream: BinaryIO) -> int:
+    def write(self, stream: IO[bytes]) -> int:
         b = BOX.write(stream, None)
         b += LAYER.write(stream, self.layer[0])
         b += BOXTYPE.write(stream, self.layer[1])
@@ -371,14 +371,14 @@ class Node(Element):
     """ Properties for the element. """
 
     @classmethod
-    def read(cls: Type[N], stream: BinaryIO) -> N:
+    def read(cls: Type[N], stream: IO[bytes]) -> N:
         layer = LAYER.skip_and_read(stream)[0]
         dtype = NODETYPE.read(stream)[0]
         xy = XY.read(stream).reshape(-1, 2)
         properties = read_properties(stream)
         return cls(layer=(layer, dtype), xy=xy, properties=properties)
 
-    def write(self, stream: BinaryIO) -> int:
+    def write(self, stream: IO[bytes]) -> int:
         b = NODE.write(stream, None)
         b += LAYER.write(stream, self.layer[0])
         b += NODETYPE.write(stream, self.layer[1])
@@ -431,7 +431,7 @@ class Text(Element):
     """ Properties for the element. """
 
     @classmethod
-    def read(cls: Type[T], stream: BinaryIO) -> T:
+    def read(cls: Type[T], stream: IO[bytes]) -> T:
         path_type = 0
         presentation = 0
         invert_y = False
@@ -467,7 +467,7 @@ class Text(Element):
                    string=string, presentation=presentation, path_type=path_type,
                    width=width, invert_y=invert_y, mag=mag, angle_deg=angle_deg)
 
-    def write(self, stream: BinaryIO) -> int:
+    def write(self, stream: IO[bytes]) -> int:
         b = TEXT.write(stream, None)
         b += LAYER.write(stream, self.layer[0])
         b += TEXTTYPE.write(stream, self.layer[1])

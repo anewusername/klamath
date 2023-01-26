@@ -1,7 +1,7 @@
 """
 Functionality for encoding/decoding basic datatypes
 """
-from typing import Sequence, BinaryIO, List
+from typing import Sequence, IO, List
 import struct
 from datetime import datetime
 
@@ -172,7 +172,7 @@ def pack_datetime(data: Sequence[datetime]) -> bytes:
     return pack_int2(parts)
 
 
-def read(stream: BinaryIO, size: int) -> bytes:
+def read(stream: IO[bytes], size: int) -> bytes:
     """ Read and check for failure """
     data = stream.read(size)
     if len(data) != size:

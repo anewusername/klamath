@@ -1,7 +1,7 @@
 """
 File-level read/write functionality.
 """
-from typing import List, Dict, Tuple, Optional, BinaryIO, TypeVar, Type, MutableMapping
+from typing import List, Dict, Tuple, Optional, IO, TypeVar, Type, MutableMapping
 import io
 from datetime import datetime
 from dataclasses import dataclass
@@ -45,7 +45,7 @@ class FileHeader:
     """ Last-accessed time """
 
     @classmethod
-    def read(cls: Type[FH], stream: BinaryIO) -> FH:
+    def read(cls: Type[FH], stream: IO[bytes]) -> FH:
         """
         Read and construct a header from the provided stream.
 
@@ -63,7 +63,7 @@ class FileHeader:
         return cls(mod_time=mod_time, acc_time=acc_time, name=name,
                    user_units_per_db_unit=uu, meters_per_db_unit=dbu)
 
-    def write(self, stream: BinaryIO) -> int:
+    def write(self, stream: IO[bytes]) -> int:
         """
         Write the header to a stream
 
@@ -80,7 +80,7 @@ class FileHeader:
         return b
 
 
-def scan_structs(stream: BinaryIO) -> Dict[bytes, int]:
+def scan_structs(stream: IO[bytes]) -> Dict[bytes, int]:
     """
     Scan through a GDS file, building a table of
       {b'structure_name': byte_offset}.
@@ -107,7 +107,7 @@ def scan_structs(stream: BinaryIO) -> Dict[bytes, int]:
     return positions
 
 
-def try_read_struct(stream: BinaryIO) -> Optional[Tuple[bytes, List[Element]]]:
+def try_read_struct(stream: IO[bytes]) -> Optional[Tuple[bytes, List[Element]]]:
     """
     Skip to the next structure and attempt to read it.
 
@@ -125,7 +125,7 @@ def try_read_struct(stream: BinaryIO) -> Optional[Tuple[bytes, List[Element]]]:
     return name, elements
 
 
-def write_struct(stream: BinaryIO,
+def write_struct(stream: IO[bytes],
                  name: bytes,
                  elements: List[Element],
                  cre_time: datetime = datetime(1900, 1, 1),
@@ -150,7 +150,7 @@ def write_struct(stream: BinaryIO,
     return b
 
 
-def read_elements(stream: BinaryIO) -> List[Element]:
+def read_elements(stream: IO[bytes]) -> List[Element]:
     """
     Read elements from the stream until an ENDSTR
       record is encountered. The ENDSTR record is also
@@ -186,7 +186,7 @@ def read_elements(stream: BinaryIO) -> List[Element]:
     return data
 
 
-def scan_hierarchy(stream: BinaryIO) -> Dict[bytes, Dict[bytes, int]]:
+def scan_hierarchy(stream: IO[bytes]) -> Dict[bytes, Dict[bytes, int]]:
     """
     Scan through a GDS file, building a table of instance counts
       `{b'structure_name': {b'ref_name': count}}`.
