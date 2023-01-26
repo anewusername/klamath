@@ -111,7 +111,7 @@ class PRESENTATION(BitArrayRecord):
 
 
 class SPACING(Int2Record):
-    tag = 0x1802        #Not sure about 02; Unused
+    tag = 0x1802        # Not sure about 02; Unused
 
 
 class STRING(ASCIIRecord):
@@ -133,11 +133,11 @@ class ANGLE(Real8Record):
 
 
 class UINTEGER(Int2Record):
-    tag = 0x1d02    #Unused; not sure about 02
+    tag = 0x1d02    # Unused; not sure about 02
 
 
 class USTRING(ASCIIRecord):
-    tag = 0x1e06      #Unused; not sure about 06
+    tag = 0x1e06      # Unused; not sure about 06
 
 
 class REFLIBS(ASCIIRecord):
@@ -183,11 +183,11 @@ class ATTRTABLE(ASCIIRecord):
 
 
 class STYPTABLE(ASCIIRecord):
-    tag = 0x2406        #UNUSED, not sure about 06
+    tag = 0x2406        # UNUSED, not sure about 06
 
 
 class STRTYPE(Int2Record):
-    tag = 0x2502        #UNUSED
+    tag = 0x2502        # UNUSED
 
 
 class ELFLAGS(BitArrayRecord):

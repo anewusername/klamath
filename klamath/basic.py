@@ -68,7 +68,7 @@ def parse_datetime(data: bytes) -> List[datetime]:
         raise KlamathError(f'Incorrect datetime size ({len(data)}). Data is {data!r}.')
     dts = []
     for ii in range(0, len(data), 12):
-        year, *date_parts = parse_int2(data[ii:ii+12])
+        year, *date_parts = parse_int2(data[ii:ii + 12])
         dts.append(datetime(year + 1900, *date_parts))
     return dts
 
@@ -149,7 +149,7 @@ def encode_real8(fnums: numpy.ndarray) -> numpy.ndarray:
 
     real8 = sign | gds_exp_bits | gds_mant
     real8[zero] = 0
-    real8[gds_exp < -14] = 0 # number is too small
+    real8[gds_exp < -14] = 0  # number is too small
 
     return real8
 

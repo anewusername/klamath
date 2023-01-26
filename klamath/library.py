@@ -55,7 +55,7 @@ class FileHeader:
         Returns:
             FileHeader object
         """
-        version = HEADER.read(stream)[0]
+        _version = HEADER.read(stream)[0]       # noqa: F841  # var is unused
         mod_time, acc_time = BGNLIB.read(stream)
         name = LIBNAME.skip_and_read(stream)
         uu, dbu = UNITS.skip_and_read(stream)
@@ -223,7 +223,7 @@ def scan_hierarchy(stream: IO[bytes]) -> Dict[bytes, Dict[bytes, int]]:
         elif tag == ENDEL.tag:
             if ref_count is None:
                 ref_count = 1
-            assert(ref_name is not None)
+            assert ref_name is not None
             cur_structure[ref_name] += ref_count
         else:
             stream.seek(size, io.SEEK_CUR)

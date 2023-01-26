@@ -28,7 +28,6 @@ T = TypeVar('T', bound='Text')
 X = TypeVar('X', bound='Box')
 
 
-
 def read_properties(stream: IO[bytes]) -> Dict[int, bytes]:
     """
     Read element properties.
@@ -189,7 +188,7 @@ class Reference(Element):
             b += STRANS.write(stream, int(self.invert_y) << 15)
             if self.mag != 1:
                 b += MAG.write(stream, self.mag)
-            if self.angle_deg !=0:
+            if self.angle_deg != 0:
                 b += ANGLE.write(stream, self.angle_deg)
 
         if self.colrow is not None:
@@ -481,7 +480,7 @@ class Text(Element):
             b += STRANS.write(stream, int(self.invert_y) << 15)
             if self.mag != 1:
                 b += MAG.write(stream, self.mag)
-            if self.angle_deg !=0:
+            if self.angle_deg != 0:
                 b += ANGLE.write(stream, self.angle_deg)
         b += XY.write(stream, self.xy)
         b += STRING.write(stream, self.string)
