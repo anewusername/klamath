@@ -2,11 +2,12 @@
 Functionality for reading/writing elements (geometry, text labels,
  structure references) and associated properties.
 """
-from typing import Dict, Tuple, Optional, IO, TypeVar, Type, Union
+from typing import Optional, IO, TypeVar, Type, Union
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
 
-import numpy        # type: ignore
+import numpy
+from numpy.typing import NDArray
 
 from .basic import KlamathError
 from .record import Record
@@ -28,7 +29,7 @@ T = TypeVar('T', bound='Text')
 X = TypeVar('X', bound='Box')
 
 
-def read_properties(stream: IO[bytes]) -> Dict[int, bytes]:
+def read_properties(stream: IO[bytes]) -> dict[int, bytes]:
     """
     Read element properties.
 
@@ -55,7 +56,7 @@ def read_properties(stream: IO[bytes]) -> Dict[int, bytes]:
     return properties
 
 
-def write_properties(stream: IO[bytes], properties: Dict[int, bytes]) -> int:
+def write_properties(stream: IO[bytes], properties: dict[int, bytes]) -> int:
     """
     Write element properties.
 
@@ -130,7 +131,7 @@ class Reference(Element):
     angle_deg: float
     """ Rotation (degrees counterclockwise) """
 
-    xy: numpy.ndarray
+    xy: NDArray[numpy.int32]
     """
      (For SREF) Location in the parent structure corresponding to the instance's origin (0, 0).
      (For AREF) 3 locations:
@@ -143,10 +144,10 @@ class Reference(Element):
           basis vectors to match it.
     """
 
-    colrow: Optional[Union[Tuple[int, int], numpy.ndarray]]
+    colrow: tuple[int, int] | NDArray[numpy.int16] | None
     """ Number of columns and rows (AREF) or None (SREF) """
 
-    properties: Dict[int, bytes]
+    properties: dict[int, bytes]
     """ Properties associated with this reference. """
 
     @classmethod
@@ -173,8 +174,15 @@ class Reference(Element):
             size, tag = Record.read_header(stream)
         xy = XY.read_data(stream, size).reshape(-1, 2)
         properties = read_properties(stream)
-        return cls(struct_name=struct_name, xy=xy, properties=properties, colrow=colrow,
-                   invert_y=invert_y, mag=mag, angle_deg=angle_deg)
+        return cls(
+            struct_name=struct_name,
+            xy=xy,
+            properties=properties,
+            colrow=colrow,
+            invert_y=invert_y,
+            mag=mag,
+            angle_deg=angle_deg,
+            )
 
     def write(self, stream: IO[bytes]) -> int:
         b = 0
@@ -215,13 +223,13 @@ class Boundary(Element):
     """
     __slots__ = ('layer', 'xy', 'properties')
 
-    layer: Tuple[int, int]
+    layer: tuple[int, int]
     """ (layer, data_type) tuple """
 
-    xy: numpy.ndarray
+    xy: NDArray[numpy.int32]
     """ Ordered vertices of the shape. First and last points should be identical. """
 
-    properties: Dict[int, bytes]
+    properties: dict[int, bytes]
     """ Properties for the element. """
 
     @classmethod
@@ -252,7 +260,7 @@ class Path(Element):
     """
     __slots__ = ('layer', 'xy', 'properties', 'path_type', 'width', 'extension')
 
-    layer: Tuple[int, int]
+    layer: tuple[int, int]
     """ (layer, data_type) tuple """
 
     path_type: int
@@ -261,13 +269,13 @@ class Path(Element):
     width: int
     """ Path width """
 
-    extension: Tuple[int, int]
+    extension: tuple[int, int]
     """ Extension when using path_type=4. Ignored otherwise. """
 
-    xy: numpy.ndarray
+    xy: NDArray[numpy.int32]
     """ Path centerline coordinates """
 
-    properties: Dict[int, bytes]
+    properties: dict[int, bytes]
     """ Properties for the element. """
 
     @classmethod
@@ -326,13 +334,13 @@ class Box(Element):
     """
     __slots__ = ('layer', 'xy', 'properties')
 
-    layer: Tuple[int, int]
+    layer: tuple[int, int]
     """ (layer, box_type) tuple """
 
-    xy: numpy.ndarray
+    xy: NDArray[numpy.int32]
     """ Box coordinates (5 pairs) """
 
-    properties: Dict[int, bytes]
+    properties: dict[int, bytes]
     """ Properties for the element. """
 
     @classmethod
@@ -360,13 +368,13 @@ class Node(Element):
     """
     __slots__ = ('layer', 'xy', 'properties')
 
-    layer: Tuple[int, int]
+    layer: tuple[int, int]
     """ (layer, node_type) tuple """
 
-    xy: numpy.ndarray
+    xy: NDArray[numpy.int32]
     """ 1-50 pairs of coordinates. """
 
-    properties: Dict[int, bytes]
+    properties: dict[int, bytes]
     """ Properties for the element. """
 
     @classmethod
@@ -395,7 +403,7 @@ class Text(Element):
     __slots__ = ('layer', 'xy', 'properties', 'presentation', 'path_type',
                  'width', 'invert_y', 'mag', 'angle_deg', 'string')
 
-    layer: Tuple[int, int]
+    layer: tuple[int, int]
     """ (layer, node_type) tuple """
 
     presentation: int
@@ -420,13 +428,13 @@ class Text(Element):
     angle_deg: float
     """ Rotation (ccw). Default 0. """
 
-    xy: numpy.ndarray
+    xy: NDArray[numpy.int32]
     """ Position (1 pair only) """
 
     string: bytes
     """ Text content """
 
-    properties: Dict[int, bytes]
+    properties: dict[int, bytes]
     """ Properties for the element. """
 
     @classmethod

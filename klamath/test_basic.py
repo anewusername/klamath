@@ -1,8 +1,8 @@
 import struct
 
 import pytest       # type: ignore
-import numpy        # type: ignore
-from numpy.testing import assert_array_equal        # type: ignore
+import numpy
+from numpy.testing import assert_array_equal
 
 from .basic import parse_bitarray, parse_int2, parse_int4, parse_real8, parse_ascii
 from .basic import pack_bitarray, pack_int2, pack_int4, pack_real8, pack_ascii

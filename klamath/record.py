@@ -1,14 +1,14 @@
 """
 Generic record-level read/write functionality.
 """
-from typing import Optional, Sequence, IO
-from typing import TypeVar, List, Tuple, ClassVar, Type
+from typing import Sequence, IO, TypeVar, ClassVar, Type
 import struct
 import io
 from datetime import datetime
 from abc import ABCMeta, abstractmethod
 
-import numpy        # type: ignore
+import numpy
+from numpy.typing import NDArray
 
 from .basic import KlamathError
 from .basic import parse_int2, parse_int4, parse_real8, parse_datetime, parse_bitarray
@@ -27,7 +27,7 @@ def write_record_header(stream: IO[bytes], data_size: int, tag: int) -> int:
     return stream.write(header)
 
 
-def read_record_header(stream: IO[bytes]) -> Tuple[int, int]:
+def read_record_header(stream: IO[bytes]) -> tuple[int, int]:
     """
     Read a record's header (size and tag).
     Args:
@@ -58,7 +58,7 @@ R = TypeVar('R', bound='Record')
 
 class Record(metaclass=ABCMeta):
     tag: ClassVar[int] = -1
-    expected_size: ClassVar[Optional[int]] = None
+    expected_size: ClassVar[int | None] = None
 
     @classmethod
     def check_size(cls, size: int):
@@ -80,7 +80,7 @@ class Record(metaclass=ABCMeta):
         pass
 
     @staticmethod
-    def read_header(stream: IO[bytes]) -> Tuple[int, int]:
+    def read_header(stream: IO[bytes]) -> tuple[int, int]:
         return read_record_header(stream)
 
     @classmethod
@@ -133,7 +133,7 @@ class Record(metaclass=ABCMeta):
 
 
 class NoDataRecord(Record):
-    expected_size: ClassVar[Optional[int]] = 0
+    expected_size: ClassVar[int | None] = 0
 
     @classmethod
     def read_data(cls, stream: IO[bytes], size: int) -> None:
@@ -147,7 +147,7 @@ class NoDataRecord(Record):
 
 
 class BitArrayRecord(Record):
-    expected_size: ClassVar[Optional[int]] = 2
+    expected_size: ClassVar[int | None] = 2
 
     @classmethod
     def read_data(cls, stream: IO[bytes], size: int) -> int:
@@ -160,7 +160,7 @@ class BitArrayRecord(Record):
 
 class Int2Record(Record):
     @classmethod
-    def read_data(cls, stream: IO[bytes], size: int) -> numpy.ndarray:
+    def read_data(cls, stream: IO[bytes], size: int) -> NDArray[numpy.int16]:
         return parse_int2(read(stream, size))
 
     @classmethod
@@ -170,7 +170,7 @@ class Int2Record(Record):
 
 class Int4Record(Record):
     @classmethod
-    def read_data(cls, stream: IO[bytes], size: int) -> numpy.ndarray:
+    def read_data(cls, stream: IO[bytes], size: int) -> NDArray[numpy.int32]:
         return parse_int4(read(stream, size))
 
     @classmethod
@@ -180,7 +180,7 @@ class Int4Record(Record):
 
 class Real8Record(Record):
     @classmethod
-    def read_data(cls, stream: IO[bytes], size: int) -> numpy.ndarray:
+    def read_data(cls, stream: IO[bytes], size: int) -> NDArray[numpy.float64]:
         return parse_real8(read(stream, size))
 
     @classmethod
@@ -200,7 +200,7 @@ class ASCIIRecord(Record):
 
 class DateTimeRecord(Record):
     @classmethod
-    def read_data(cls, stream: IO[bytes], size: int) -> List[datetime]:
+    def read_data(cls, stream: IO[bytes], size: int) -> list[datetime]:
         return parse_datetime(read(stream, size))
 
     @classmethod

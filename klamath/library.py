@@ -1,7 +1,7 @@
 """
 File-level read/write functionality.
 """
-from typing import List, Dict, Tuple, Optional, IO, TypeVar, Type, MutableMapping
+from typing import IO, TypeVar, Type, MutableMapping
 import io
 from datetime import datetime
 from dataclasses import dataclass
@@ -80,7 +80,7 @@ class FileHeader:
         return b
 
 
-def scan_structs(stream: IO[bytes]) -> Dict[bytes, int]:
+def scan_structs(stream: IO[bytes]) -> dict[bytes, int]:
     """
     Scan through a GDS file, building a table of
       {b'structure_name': byte_offset}.
@@ -107,7 +107,7 @@ def scan_structs(stream: IO[bytes]) -> Dict[bytes, int]:
     return positions
 
 
-def try_read_struct(stream: IO[bytes]) -> Optional[Tuple[bytes, List[Element]]]:
+def try_read_struct(stream: IO[bytes]) -> tuple[bytes, list[Element]] | None:
     """
     Skip to the next structure and attempt to read it.
 
@@ -125,12 +125,13 @@ def try_read_struct(stream: IO[bytes]) -> Optional[Tuple[bytes, List[Element]]]:
     return name, elements
 
 
-def write_struct(stream: IO[bytes],
-                 name: bytes,
-                 elements: List[Element],
-                 cre_time: datetime = datetime(1900, 1, 1),
-                 mod_time: datetime = datetime(1900, 1, 1),
-                 ) -> int:
+def write_struct(
+        stream: IO[bytes],
+        name: bytes,
+        elements: list[Element],
+        cre_time: datetime = datetime(1900, 1, 1),
+        mod_time: datetime = datetime(1900, 1, 1),
+        ) -> int:
     """
     Write a structure to the provided stream.
 
@@ -150,7 +151,7 @@ def write_struct(stream: IO[bytes],
     return b
 
 
-def read_elements(stream: IO[bytes]) -> List[Element]:
+def read_elements(stream: IO[bytes]) -> list[Element]:
     """
     Read elements from the stream until an ENDSTR
       record is encountered. The ENDSTR record is also
@@ -162,7 +163,7 @@ def read_elements(stream: IO[bytes]) -> List[Element]:
     Returns:
         List of element objects.
     """
-    data: List[Element] = []
+    data: list[Element] = []
     size, tag = Record.read_header(stream)
     while tag != ENDSTR.tag:
         if tag == BOUNDARY.tag:
@@ -186,7 +187,7 @@ def read_elements(stream: IO[bytes]) -> List[Element]:
     return data
 
 
-def scan_hierarchy(stream: IO[bytes]) -> Dict[bytes, Dict[bytes, int]]:
+def scan_hierarchy(stream: IO[bytes]) -> dict[bytes, dict[bytes, int]]:
     """
     Scan through a GDS file, building a table of instance counts
       `{b'structure_name': {b'ref_name': count}}`.

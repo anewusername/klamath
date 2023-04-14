@@ -49,7 +49,7 @@ The goal is to keep this library simple:
 ## Installation
 
 Requirements:
-* python >= 3.7 (written and tested with 3.8)
+* python >= 3.10 (written and tested with 3.11)
 * numpy
 
 

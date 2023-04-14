@@ -1,20 +1,21 @@
 """
 Functionality for encoding/decoding basic datatypes
 """
-from typing import Sequence, IO, List
+from typing import Sequence, IO
 import struct
 from datetime import datetime
 
-import numpy        # type: ignore
+import numpy
+from numpy.typing import NDArray
 
 
 class KlamathError(Exception):
     pass
 
 
-"""
-Parse functions
-"""
+#
+# Parse functions
+#
 def parse_bitarray(data: bytes) -> int:
     if len(data) != 2:
         raise KlamathError(f'Incorrect bitarray size ({len(data)}). Data is {data!r}.')
@@ -22,21 +23,21 @@ def parse_bitarray(data: bytes) -> int:
     return val
 
 
-def parse_int2(data: bytes) -> numpy.ndarray:
+def parse_int2(data: bytes) -> NDArray[numpy.int16]:
     data_len = len(data)
     if data_len == 0 or (data_len % 2) != 0:
         raise KlamathError(f'Incorrect int2 size ({len(data)}). Data is {data!r}.')
     return numpy.frombuffer(data, dtype='>i2', count=data_len // 2)
 
 
-def parse_int4(data: bytes) -> numpy.ndarray:
+def parse_int4(data: bytes) -> NDArray[numpy.int32]:
     data_len = len(data)
     if data_len == 0 or (data_len % 4) != 0:
         raise KlamathError(f'Incorrect int4 size ({len(data)}). Data is {data!r}.')
     return numpy.frombuffer(data, dtype='>i4', count=data_len // 4)
 
 
-def decode_real8(nums: numpy.ndarray) -> numpy.ndarray:
+def decode_real8(nums: NDArray[numpy.uint64]) -> NDArray[numpy.float64]:
     """ Convert GDS REAL8 data to IEEE float64. """
     nums = nums.astype(numpy.uint64)
     neg = nums & 0x8000_0000_0000_0000
@@ -46,7 +47,7 @@ def decode_real8(nums: numpy.ndarray) -> numpy.ndarray:
     return numpy.ldexp(mant, (4 * (exp - 64) - 56).astype(numpy.int64))
 
 
-def parse_real8(data: bytes) -> numpy.ndarray:
+def parse_real8(data: bytes) -> NDArray[numpy.float64]:
     data_len = len(data)
     if data_len == 0 or (data_len % 8) != 0:
         raise KlamathError(f'Incorrect real8 size ({len(data)}). Data is {data!r}.')
@@ -62,7 +63,7 @@ def parse_ascii(data: bytes) -> bytes:
     return data
 
 
-def parse_datetime(data: bytes) -> List[datetime]:
+def parse_datetime(data: bytes) -> list[datetime]:
     """ Parse date/time data (12 byte blocks) """
     if len(data) == 0 or len(data) % 12 != 0:
         raise KlamathError(f'Incorrect datetime size ({len(data)}). Data is {data!r}.')
@@ -73,9 +74,9 @@ def parse_datetime(data: bytes) -> List[datetime]:
     return dts
 
 
-"""
-Pack functions
-"""
+#
+# Pack functions
+#
 def pack_bitarray(data: int) -> bytes:
     if data > 65535 or data < 0:
         raise KlamathError(f'bitarray data out of range: {data}')
@@ -96,7 +97,7 @@ def pack_int4(data: Sequence[int]) -> bytes:
     return arr.astype('>i4').tobytes()
 
 
-def encode_real8(fnums: numpy.ndarray) -> numpy.ndarray:
+def encode_real8(fnums: NDArray[numpy.float64]) -> NDArray[numpy.uint64]:
     """ Convert from float64 to GDS REAL8 representation. """
     # Split the ieee float bitfields
     ieee = numpy.atleast_1d(fnums.astype(numpy.float64).view(numpy.uint64))
@@ -151,7 +152,7 @@ def encode_real8(fnums: numpy.ndarray) -> numpy.ndarray:
     real8[zero] = 0
     real8[gds_exp < -14] = 0  # number is too small
 
-    return real8
+    return real8.astype(numpy.uint64, copy=False)
 
 
 def pack_real8(data: Sequence[float]) -> bytes:
