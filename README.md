@@ -44,6 +44,7 @@ The goal is to keep this library simple:
 ### Links
 - [Source repository](https://mpxd.net/code/jan/klamath)
 - [PyPI](https://pypi.org/project/klamath)
+- [Github mirror](https://github.com/anewusername/klamath)
 
 
 ## Installation
