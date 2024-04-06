@@ -44,7 +44,7 @@ def decode_real8(nums: NDArray[numpy.uint64]) -> NDArray[numpy.float64]:
     exp = (nums >> 56) & 0x7f
     mant = (nums & 0x00ff_ffff_ffff_ffff).astype(numpy.float64)
     mant[neg != 0] *= -1
-    return numpy.ldexp(mant, (4 * (exp - 64) - 56).astype(numpy.int64))
+    return numpy.ldexp(mant, 4 * (exp - 64) - 56, signature=(float, int, float))
 
 
 def parse_real8(data: bytes) -> NDArray[numpy.float64]:
