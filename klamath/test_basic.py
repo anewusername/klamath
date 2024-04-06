@@ -2,11 +2,12 @@ import struct
 
 import pytest       # type: ignore
 import numpy
+from datetime import datetime
 from numpy.testing import assert_array_equal
 
 from .basic import parse_bitarray, parse_int2, parse_int4, parse_real8, parse_ascii
 from .basic import pack_bitarray, pack_int2, pack_int4, pack_real8, pack_ascii
-from .basic import decode_real8, encode_real8
+from .basic import decode_real8, encode_real8, parse_datetime
 
 from .basic import KlamathError
 
@@ -117,3 +118,14 @@ def test_pack_real8():
 def test_pack_ascii():
     assert pack_ascii(b'4321') == b'4321'
     assert pack_ascii(b'321') == b'321\0'
+
+
+def test_invalid_date():
+    default = [datetime(1900, 1, 1, 0, 0, 0)]
+    assert parse_datetime(pack_int2((0, 0, 0, 0, 0, 0))) == default
+    assert parse_datetime(pack_int2((0, 1, 32, 0, 0, 0))) == default
+    assert parse_datetime(pack_int2((0, 2, 30, 0, 0, 0))) == default
+    assert parse_datetime(pack_int2((0, 1, 1, 24, 0, 0))) == default
+    assert parse_datetime(pack_int2((0, 1, 1, 25, 0, 0))) == default
+    assert parse_datetime(pack_int2((0, 1, 1, 0, 61, 0))) == default
+    assert parse_datetime(pack_int2((0, 1, 1, 0,  0, 61))) == default

@@ -3,10 +3,14 @@ Functionality for encoding/decoding basic datatypes
 """
 from typing import Sequence, IO
 import struct
+import logging
 from datetime import datetime
 
 import numpy
 from numpy.typing import NDArray
+
+
+logger = logging.getLogger(__name__)
 
 
 class KlamathError(Exception):
@@ -70,7 +74,12 @@ def parse_datetime(data: bytes) -> list[datetime]:
     dts = []
     for ii in range(0, len(data), 12):
         year, *date_parts = parse_int2(data[ii:ii + 12])
-        dts.append(datetime(year + 1900, *date_parts))
+        try:
+            dt = datetime(year + 1900, *date_parts)
+        except ValueError as err:
+            dt = datetime(1900, 1, 1, 0, 0, 0)
+            logger.warning(f'Invalid date {[year] + date_parts}, setting {dt} instead')
+        dts.append(dt)
     return dts
 
 
