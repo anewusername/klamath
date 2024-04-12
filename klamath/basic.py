@@ -78,7 +78,7 @@ def parse_datetime(data: bytes) -> list[datetime]:
             dt = datetime(year + 1900, *date_parts)
         except ValueError as err:
             dt = datetime(1900, 1, 1, 0, 0, 0)
-            logger.warning(f'Invalid date {[year] + date_parts}, setting {dt} instead')
+            logger.info(f'Invalid date {[year] + date_parts}, setting {dt} instead')
         dts.append(dt)
     return dts
 
