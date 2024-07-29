@@ -51,7 +51,7 @@ def read_properties(stream: IO[bytes]) -> dict[int, bytes]:
             value = PROPVALUE.read(stream)
             if key in properties:
                 raise KlamathError(f'Duplicate property key: {key!r}')
-            properties[key]  = value
+            properties[key] = value
         size, tag = Record.read_header(stream)
     return properties
 
