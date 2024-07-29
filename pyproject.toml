@@ -45,7 +45,7 @@ classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)",
     ]
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 include = [
     "LICENSE.md"
     ]
