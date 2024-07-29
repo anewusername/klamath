@@ -1,7 +1,10 @@
 """
 Record type and tag definitions
 """
-from typing import Sequence
+from typing import Self
+from collections.abc import Sequence, Sized
+import numpy
+from numpy.typing import NDArray
 
 from .record import NoDataRecord, BitArrayRecord, Int2Record, Int4Record, Real8Record
 from .record import ASCIIRecord, DateTimeRecord
@@ -169,7 +172,7 @@ class GENERATIONS(Int2Record):
 
     @classmethod
     def check_data(cls: type[Self], data: NDArray[numpy.integer] | Sequence[int] | int) -> None:
-        if len(data) != 1:
+        if not isinstance(data, Sized) or len(data) != 1:
             raise Exception(f'Expected exactly one integer, got {data}')
 
 
@@ -267,7 +270,7 @@ class FORMAT(Int2Record):
 
     @classmethod
     def check_data(cls: type[Self], data: NDArray[numpy.integer] | Sequence[int] | int) -> None:
-        if len(data) != 1:
+        if not isinstance(data, Sized) or len(data) != 1:
             raise Exception(f'Expected exactly one integer, got {data}')
 
 

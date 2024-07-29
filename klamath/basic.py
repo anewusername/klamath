@@ -1,7 +1,8 @@
 """
 Functionality for encoding/decoding basic datatypes
 """
-from typing import Sequence, IO
+from typing import IO
+from collections.abc import Sequence
 import struct
 import logging
 from datetime import datetime

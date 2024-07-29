@@ -1,7 +1,7 @@
 """
 File-level read/write functionality.
 """
-from typing import IO, TypeVar, Type, MutableMapping
+from typing import IO, Self, TYPE_CHECKING
 import io
 from datetime import datetime
 from dataclasses import dataclass
@@ -15,8 +15,8 @@ from .records import BGNSTR, STRNAME, ENDSTR, SNAME, COLROW, ENDEL
 from .records import BOX, BOUNDARY, NODE, PATH, TEXT, SREF, AREF
 from .elements import Element, Reference, Text, Box, Boundary, Path, Node
 
-
-FH = TypeVar('FH', bound='FileHeader')
+if TYPE_CHECKING:
+    from collections.abc import MutableMapping
 
 
 @dataclass
@@ -45,7 +45,7 @@ class FileHeader:
     """ Last-accessed time """
 
     @classmethod
-    def read(cls: Type[FH], stream: IO[bytes]) -> FH:
+    def read(cls: type[Self], stream: IO[bytes]) -> Self:
         """
         Read and construct a header from the provided stream.
 

@@ -2,7 +2,7 @@
 Functionality for reading/writing elements (geometry, text labels,
  structure references) and associated properties.
 """
-from typing import Optional, IO, TypeVar, Type, Union
+from typing import IO, TypeVar
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
 
@@ -78,7 +78,7 @@ class Element(metaclass=ABCMeta):
     """
     @classmethod
     @abstractmethod
-    def read(cls: Type[E], stream: IO[bytes]) -> E:
+    def read(cls: type[E], stream: IO[bytes]) -> E:
         """
         Read from a stream to construct this object.
         Consumes up to (and including) the ENDEL record.
@@ -151,7 +151,7 @@ class Reference(Element):
     """ Properties associated with this reference. """
 
     @classmethod
-    def read(cls: Type[R], stream: IO[bytes]) -> R:
+    def read(cls: type[R], stream: IO[bytes]) -> R:
         invert_y = False
         mag = 1
         angle_deg = 0
@@ -233,7 +233,7 @@ class Boundary(Element):
     """ Properties for the element. """
 
     @classmethod
-    def read(cls: Type[B], stream: IO[bytes]) -> B:
+    def read(cls: type[B], stream: IO[bytes]) -> B:
         layer = LAYER.skip_and_read(stream)[0]
         dtype = DATATYPE.read(stream)[0]
         xy = XY.read(stream).reshape(-1, 2)
@@ -279,7 +279,7 @@ class Path(Element):
     """ Properties for the element. """
 
     @classmethod
-    def read(cls: Type[P], stream: IO[bytes]) -> P:
+    def read(cls: type[P], stream: IO[bytes]) -> P:
         path_type = 0
         width = 0
         bgn_ext = 0
@@ -344,7 +344,7 @@ class Box(Element):
     """ Properties for the element. """
 
     @classmethod
-    def read(cls: Type[X], stream: IO[bytes]) -> X:
+    def read(cls: type[X], stream: IO[bytes]) -> X:
         layer = LAYER.skip_and_read(stream)[0]
         dtype = BOXTYPE.read(stream)[0]
         xy = XY.read(stream).reshape(-1, 2)
@@ -378,7 +378,7 @@ class Node(Element):
     """ Properties for the element. """
 
     @classmethod
-    def read(cls: Type[N], stream: IO[bytes]) -> N:
+    def read(cls: type[N], stream: IO[bytes]) -> N:
         layer = LAYER.skip_and_read(stream)[0]
         dtype = NODETYPE.read(stream)[0]
         xy = XY.read(stream).reshape(-1, 2)
@@ -438,7 +438,7 @@ class Text(Element):
     """ Properties for the element. """
 
     @classmethod
-    def read(cls: Type[T], stream: IO[bytes]) -> T:
+    def read(cls: type[T], stream: IO[bytes]) -> T:
         path_type = 0
         presentation = 0
         invert_y = False
