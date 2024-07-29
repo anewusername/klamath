@@ -65,7 +65,7 @@ class Record(Generic[II, OO], metaclass=ABCMeta):
         if cls.expected_size is not None and size != cls.expected_size:
             raise KlamathError(f'Expected size {cls.expected_size}, got {size}')
 
-    @classmethod
+    @classmethod            # noqa: B027      Intentionally non-abstract
     def check_data(cls: type[Self], data: II) -> None:
         pass
 
