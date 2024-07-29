@@ -6,6 +6,7 @@ from collections.abc import Sequence, Sized
 import numpy
 from numpy.typing import NDArray
 
+from .basic import KlamathError
 from .record import NoDataRecord, BitArrayRecord, Int2Record, Int4Record, Real8Record
 from .record import ASCIIRecord, DateTimeRecord
 
@@ -149,7 +150,7 @@ class REFLIBS(ASCIIRecord):
     @classmethod
     def check_size(cls: type[Self], size: int) -> None:
         if size != 0 and size % 44 != 0:
-            raise Exception(f'Expected size to be multiple of 44, got {size}')
+            raise KlamathError(f'Expected size to be multiple of 44, got {size}')
 
 
 class FONTS(ASCIIRecord):
@@ -158,7 +159,7 @@ class FONTS(ASCIIRecord):
     @classmethod
     def check_size(cls: type[Self], size: int) -> None:
         if size != 0 and size % 44 != 0:
-            raise Exception(f'Expected size to be multiple of 44, got {size}')
+            raise KlamathError(f'Expected size to be multiple of 44, got {size}')
 
 
 class PATHTYPE(Int2Record):
@@ -173,7 +174,7 @@ class GENERATIONS(Int2Record):
     @classmethod
     def check_data(cls: type[Self], data: NDArray[numpy.integer] | Sequence[int] | int) -> None:
         if not isinstance(data, Sized) or len(data) != 1:
-            raise Exception(f'Expected exactly one integer, got {data}')
+            raise KlamathError(f'Expected exactly one integer, got {data}')
 
 
 class ATTRTABLE(ASCIIRecord):
@@ -182,7 +183,7 @@ class ATTRTABLE(ASCIIRecord):
     @classmethod
     def check_size(cls: type[Self], size: int) -> None:
         if size > 44:
-            raise Exception(f'Expected size <= 44, got {size}')
+            raise KlamathError(f'Expected size <= 44, got {size}')
 
 
 class STYPTABLE(ASCIIRecord):
@@ -271,7 +272,7 @@ class FORMAT(Int2Record):
     @classmethod
     def check_data(cls: type[Self], data: NDArray[numpy.integer] | Sequence[int] | int) -> None:
         if not isinstance(data, Sized) or len(data) != 1:
-            raise Exception(f'Expected exactly one integer, got {data}')
+            raise KlamathError(f'Expected exactly one integer, got {data}')
 
 
 class MASK(ASCIIRecord):
