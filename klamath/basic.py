@@ -94,14 +94,14 @@ def pack_bitarray(data: int) -> bytes:
 
 
 def pack_int2(data: NDArray[numpy.integer] | Sequence[int] | int) -> bytes:
-    arr = numpy.array(data, copy=False)
+    arr = numpy.asarray(data)
     if (arr > 32767).any() or (arr < -32768).any():
         raise KlamathError(f'int2 data out of range: {arr}')
     return arr.astype('>i2').tobytes()
 
 
 def pack_int4(data: NDArray[numpy.integer] | Sequence[int] | int) -> bytes:
-    arr = numpy.array(data, copy=False)
+    arr = numpy.asarray(data)
     if (arr > 2147483647).any() or (arr < -2147483648).any():
         raise KlamathError(f'int4 data out of range: {arr}')
     return arr.astype('>i4').tobytes()
@@ -166,7 +166,7 @@ def encode_real8(fnums: NDArray[numpy.float64]) -> NDArray[numpy.uint64]:
 
 
 def pack_real8(data: NDArray[numpy.floating] | Sequence[float] | float) -> bytes:
-    return encode_real8(numpy.array(data, copy=False)).astype('>u8').tobytes()
+    return encode_real8(numpy.asarray(data)).astype('>u8').tobytes()
 
 
 def pack_ascii(data: bytes) -> bytes:
