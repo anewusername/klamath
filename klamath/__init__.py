@@ -27,11 +27,13 @@ The goal is to keep this library simple:
  tools for working with hierarchical design data and supports multiple
  file formats.
 """
-from . import basic
-from . import record
-from . import records
-from . import elements
-from . import library
+from . import (
+    basic as basic,
+    record as record,
+    records as records,
+    elements as elements,
+    library as library,
+    )
 
 __author__ = 'Jan Petykiewicz'
 __version__ = '1.3'
