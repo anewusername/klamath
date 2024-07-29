@@ -176,9 +176,7 @@ def read_elements(stream: IO[bytes]) -> list[Element]:
             data.append(Box.read(stream))
         elif tag == TEXT.tag:
             data.append(Text.read(stream))
-        elif tag == SREF.tag:
-            data.append(Reference.read(stream))
-        elif tag == AREF.tag:
+        elif tag in (SREF.tag, AREF.tag):
             data.append(Reference.read(stream))
         else:
             # don't care, skip
