@@ -12,7 +12,7 @@ from .basic import decode_real8, encode_real8, parse_datetime
 from .basic import KlamathError
 
 
-def test_parse_bitarray():
+def test_parse_bitarray() -> None:
     assert parse_bitarray(b'59') == 13625
     assert parse_bitarray(b'\0\0') == 0
     assert parse_bitarray(b'\xff\xff') == 65535
@@ -26,7 +26,7 @@ def test_parse_bitarray():
         parse_bitarray(b'')
 
 
-def test_parse_int2():
+def test_parse_int2() -> None:
     assert_array_equal(parse_int2(b'59\xff\xff\0\0'), (13625, -1, 0))
 
     # odd length
@@ -38,7 +38,7 @@ def test_parse_int2():
         parse_int2(b'')
 
 
-def test_parse_int4():
+def test_parse_int4() -> None:
     assert_array_equal(parse_int4(b'4321'), (875770417,))
 
     # length % 4 != 0
@@ -50,7 +50,7 @@ def test_parse_int4():
         parse_int4(b'')
 
 
-def test_decode_real8():
+def test_decode_real8() -> None:
     # zeroes
     assert decode_real8(numpy.array([0x0])) == 0
     assert decode_real8(numpy.array([1 << 63])) == 0  # negative
@@ -60,7 +60,7 @@ def test_decode_real8():
     assert decode_real8(numpy.array([0xC120 << 48])) == -2.0
 
 
-def test_parse_real8():
+def test_parse_real8() -> None:
     packed = struct.pack('>3Q', 0x0, 0x4110_0000_0000_0000, 0xC120_0000_0000_0000)
     assert_array_equal(parse_real8(packed), (0.0, 1.0, -2.0))
 
@@ -73,7 +73,7 @@ def test_parse_real8():
         parse_real8(b'')
 
 
-def test_parse_ascii():
+def test_parse_ascii() -> None:
     # # empty data       Now allowed!
     # with pytest.raises(KlamathError):
     #     parse_ascii(b'')
@@ -82,40 +82,40 @@ def test_parse_ascii():
     assert parse_ascii(b'12345\0') == b'12345'  # strips trailing null byte
 
 
-def test_pack_bitarray():
+def test_pack_bitarray() -> None:
     packed = pack_bitarray(321)
     assert len(packed) == 2
     assert packed == struct.pack('>H', 321)
 
 
-def test_pack_int2():
+def test_pack_int2() -> None:
     packed = pack_int2((3, 2, 1))
     assert len(packed) == 3 * 2
     assert packed == struct.pack('>3h', 3, 2, 1)
     assert pack_int2([-3, 2, -1]) == struct.pack('>3h', -3, 2, -1)
 
 
-def test_pack_int4():
+def test_pack_int4() -> None:
     packed = pack_int4((3, 2, 1))
     assert len(packed) == 3 * 4
     assert packed == struct.pack('>3l', 3, 2, 1)
     assert pack_int4([-3, 2, -1]) == struct.pack('>3l', -3, 2, -1)
 
 
-def test_encode_real8():
+def test_encode_real8() -> None:
     assert encode_real8(numpy.array([0.0])) == 0
     arr = numpy.array((1.0, -2.0, 1e-9, 1e-3, 1e-12))
     assert_array_equal(decode_real8(encode_real8(arr)), arr)
 
 
-def test_pack_real8():
+def test_pack_real8() -> None:
     reals = (0, 1, -1, 0.5, 1e-9, 1e-3, 1e-12)
     packed = pack_real8(reals)
     assert len(packed) == len(reals) * 8
     assert_array_equal(parse_real8(packed), reals)
 
 
-def test_pack_ascii():
+def test_pack_ascii() -> None:
     assert pack_ascii(b'4321') == b'4321'
     assert pack_ascii(b'321') == b'321\0'
 

@@ -144,7 +144,7 @@ class REFLIBS(ASCIIRecord):
     tag = 0x1f06
 
     @classmethod
-    def check_size(cls, size: int):
+    def check_size(cls: type[Self], size: int) -> None:
         if size != 0 and size % 44 != 0:
             raise Exception(f'Expected size to be multiple of 44, got {size}')
 
@@ -153,7 +153,7 @@ class FONTS(ASCIIRecord):
     tag = 0x2006
 
     @classmethod
-    def check_size(cls, size: int):
+    def check_size(cls: type[Self], size: int) -> None:
         if size != 0 and size % 44 != 0:
             raise Exception(f'Expected size to be multiple of 44, got {size}')
 
@@ -168,7 +168,7 @@ class GENERATIONS(Int2Record):
     expected_size = 2
 
     @classmethod
-    def check_data(cls, data: Sequence[int]):
+    def check_data(cls: type[Self], data: NDArray[numpy.integer] | Sequence[int] | int) -> None:
         if len(data) != 1:
             raise Exception(f'Expected exactly one integer, got {data}')
 
@@ -177,7 +177,7 @@ class ATTRTABLE(ASCIIRecord):
     tag = 0x2306
 
     @classmethod
-    def check_size(cls, size: int):
+    def check_size(cls: type[Self], size: int) -> None:
         if size > 44:
             raise Exception(f'Expected size <= 44, got {size}')
 
@@ -266,7 +266,7 @@ class FORMAT(Int2Record):
     expected_size = 2
 
     @classmethod
-    def check_data(cls, data: Sequence[int]):
+    def check_data(cls: type[Self], data: NDArray[numpy.integer] | Sequence[int] | int) -> None:
         if len(data) != 1:
             raise Exception(f'Expected exactly one integer, got {data}')
 
