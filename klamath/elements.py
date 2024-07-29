@@ -211,7 +211,7 @@ class Reference(Element):
         if self.colrow is not None:
             if self.xy.size != 6:
                 raise KlamathError(f'colrow is not None, so expected size-6 xy. Got {self.xy}')
-        else:
+        else:           # noqa: PLR5501
             if self.xy.size != 2:
                 raise KlamathError(f'Expected size-2 xy. Got {self.xy}')
 
