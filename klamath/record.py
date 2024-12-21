@@ -142,7 +142,7 @@ class NoDataRecord(Record[None, None]):
     @classmethod
     def pack_data(cls: type[Self], data: None) -> bytes:
         if data is not None:
-            raise KlamathError('?? Packing {data} into NoDataRecord??')
+            raise KlamathError('?? Packing {data!r} into NoDataRecord??')
         return b''
 
 
