@@ -3,6 +3,7 @@ Functionality for reading/writing elements (geometry, text labels,
  structure references) and associated properties.
 """
 from typing import IO, TypeVar
+from collections.abc import Mapping
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
 
@@ -56,7 +57,7 @@ def read_properties(stream: IO[bytes]) -> dict[int, bytes]:
     return properties
 
 
-def write_properties(stream: IO[bytes], properties: dict[int, bytes]) -> int:
+def write_properties(stream: IO[bytes], properties: Mapping[int, bytes]) -> int:
     """
     Write element properties.
 
@@ -147,7 +148,7 @@ class Reference(Element):
     colrow: tuple[int, int] | NDArray[numpy.int16] | None
     """ Number of columns and rows (AREF) or None (SREF) """
 
-    properties: dict[int, bytes]
+    properties: Mapping[int, bytes]
     """ Properties associated with this reference. """
 
     @classmethod
@@ -229,7 +230,7 @@ class Boundary(Element):
     xy: NDArray[numpy.int32]
     """ Ordered vertices of the shape. First and last points should be identical. """
 
-    properties: dict[int, bytes]
+    properties: Mapping[int, bytes]
     """ Properties for the element. """
 
     @classmethod
@@ -275,7 +276,7 @@ class Path(Element):
     xy: NDArray[numpy.int32]
     """ Path centerline coordinates """
 
-    properties: dict[int, bytes]
+    properties: Mapping[int, bytes]
     """ Properties for the element. """
 
     @classmethod
@@ -340,7 +341,7 @@ class Box(Element):
     xy: NDArray[numpy.int32]
     """ Box coordinates (5 pairs) """
 
-    properties: dict[int, bytes]
+    properties: Mapping[int, bytes]
     """ Properties for the element. """
 
     @classmethod
@@ -374,7 +375,7 @@ class Node(Element):
     xy: NDArray[numpy.int32]
     """ 1-50 pairs of coordinates. """
 
-    properties: dict[int, bytes]
+    properties: Mapping[int, bytes]
     """ Properties for the element. """
 
     @classmethod
@@ -434,7 +435,7 @@ class Text(Element):
     string: bytes
     """ Text content """
 
-    properties: dict[int, bytes]
+    properties: Mapping[int, bytes]
     """ Properties for the element. """
 
     @classmethod
