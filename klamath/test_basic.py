@@ -120,7 +120,7 @@ def test_pack_ascii() -> None:
     assert pack_ascii(b'321') == b'321\0'
 
 
-def test_invalid_date():
+def test_invalid_date() -> None:
     default = [datetime(1900, 1, 1, 0, 0, 0)]
     assert parse_datetime(pack_int2((0, 0, 0, 0, 0, 0))) == default
     assert parse_datetime(pack_int2((0, 1, 32, 0, 0, 0))) == default
